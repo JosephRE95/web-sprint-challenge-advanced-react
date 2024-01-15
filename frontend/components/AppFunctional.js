@@ -17,19 +17,19 @@ export default function AppFunctional(props) {
       case 0:
         return { x: 1, y: 1 };
       case 1:
-        return { x: 1, y: 2 };
-      case 2:
-        return { x: 1, y: 3 };
-      case 3:
         return { x: 2, y: 1 };
+      case 2:
+        return { x: 3, y: 1 };
+      case 3:
+        return { x: 1, y: 2 };
       case 4:
         return { x: 2, y: 2 };
       case 5:
-        return { x: 2, y: 3 };
-      case 6:
-        return { x: 3, y: 1 };
-      case 7:
         return { x: 3, y: 2 };
+      case 6:
+        return { x: 1, y: 3 };
+      case 7:
+        return { x: 2, y: 3 };
       case 8:
         return { x: 3, y: 3 };
       default:
@@ -58,7 +58,7 @@ export default function AppFunctional(props) {
           setSteps(steps + 1);
           setMessage("");
         } else {
-          setMessage("You cant move left");
+          setMessage("You can't go left");
         }
         break;
       case "up":
@@ -67,7 +67,7 @@ export default function AppFunctional(props) {
           setSteps(steps + 1);
           setMessage("");
         } else {
-          setMessage("You cant move up");
+          setMessage("You can't go up");
         }
         break;
       case "right":
@@ -76,7 +76,7 @@ export default function AppFunctional(props) {
           setSteps(steps + 1);
           setMessage("");
         } else {
-          setMessage("You cant move right");
+          setMessage("You can't go right");
         }
         break;
       case "down":
@@ -85,37 +85,37 @@ export default function AppFunctional(props) {
           setSteps(steps + 1);
           setMessage("");
         } else {
-          setMessage("You cant move down");
+          setMessage("You can't go down");
         }
         break;
     }
   }
 
-  function onChange(evt) {
-    setEmail(evt.target.value);
-  }
 
   function onSubmit(evt) {
     evt.preventDefault();
     const data = {
       email: email,
       steps: steps,
-      x: getXY()[0],
-      y: getXY()[1],
+      x: getXY().x,
+      y: getXY().y,
     };
   
     axios.post('http://localhost:9000/api/result', data)
-  .then((res) => {
-    console.log(data); // Log the response data to the console
-    setMessage(res.data.message);
-    setEmail(initialEmail);
-  })
-  .catch((error) => {
-    console.error('Error:', error);
-    setMessage(error.response.data.message); 
-  });
-
+      .then(({ data }) => {
+        console.log(data); // Log the response data to the console
+        setMessage(data.message);
+        setEmail(initialEmail);
+        // Reset coordinates and steps after successful submission
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+        setMessage(error.response.data.message);
+        setEmail(initialEmail);
+      });
   }
+  
+  
   
 
   return (
@@ -156,17 +156,18 @@ export default function AppFunctional(props) {
           reset
         </button>
       </div>
-      <form >
-        <input
-          value={email}
-          onChange={onChange}
-          id="email"
-          type="email"
-          placeholder="type email"
-        />
-        <input onClick={onSubmit}
-         id="submit" type="submit" />
-      </form>
+      <form>
+  <input
+    value={email}
+    onChange={(e) => setEmail(e.target.value)}
+    id="email"
+    type="email"
+    placeholder="type email"
+  />
+  <button type="button" onClick={onSubmit} id="submit">
+    Submit
+  </button>
+</form>
     </div>
   );
 }
