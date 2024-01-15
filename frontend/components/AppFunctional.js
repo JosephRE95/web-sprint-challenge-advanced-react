@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import axios from "axios";
+import React, { useState } from "react";
 
-const initialMessage = '';
-const initialEmail = '';
+const initialMessage = "";
+const initialEmail = "";
 const initialSteps = 0;
 const initialIndex = 4; // the index the "B" is at
 
@@ -13,19 +14,28 @@ export default function AppFunctional(props) {
 
   function getXY() {
     switch (currentIndex) {
-      case 0: return { x: 1, y: 1 };
-      case 1: return { x: 1, y: 2 };
-      case 2: return { x: 1, y: 3 };
-      case 3: return { x: 2, y: 1 };
-      case 4: return { x: 2, y: 2 };
-      case 5: return { x: 2, y: 3 };
-      case 6: return { x: 3, y: 1 };
-      case 7: return { x: 3, y: 2 };
-      case 8: return { x: 3, y: 3 };
-      default: return { x: 0, y: 0 }; // Handle other cases if needed
+      case 0:
+        return { x: 1, y: 1 };
+      case 1:
+        return { x: 1, y: 2 };
+      case 2:
+        return { x: 1, y: 3 };
+      case 3:
+        return { x: 2, y: 1 };
+      case 4:
+        return { x: 2, y: 2 };
+      case 5:
+        return { x: 2, y: 3 };
+      case 6:
+        return { x: 3, y: 1 };
+      case 7:
+        return { x: 3, y: 2 };
+      case 8:
+        return { x: 3, y: 3 };
+      default:
+        return { x: 0, y: 0 }; // Handle other cases if needed
     }
   }
-  
 
   function getXYMessage() {
     const { x, y } = getXY();
@@ -39,52 +49,46 @@ export default function AppFunctional(props) {
     setCurrentIndex(initialIndex);
   }
 
-
   function move(evt) {
     const direction = evt.target.id;
     switch (direction) {
-      case 'left':
-      if (currentIndex !== 0 && currentIndex !== 3 && currentIndex !== 6){
-      setCurrentIndex(currentIndex -1)
-      setSteps(steps +1 )
-      setMessage('')
-      } else {
-        setMessage("You cant move left")
-      }
-      break;
-      case 'up':
-      if (currentIndex !== 0 && currentIndex !== 1 && currentIndex !== 2){
-      setCurrentIndex(currentIndex -3)
-      setSteps(steps +1 )
-      setMessage('')
-
-      } else {
-        setMessage("You cant move up")
-      }
-      break;
-      case 'right':
-      if (currentIndex !== 2 && currentIndex !== 5 && currentIndex !== 8){
-      setCurrentIndex(currentIndex +1)
-      setSteps(steps + 1)
-      setMessage('')
-
-      } else {
-        setMessage("You cant move right")
-      }
-      break;
-      case 'down':
-      if (currentIndex !== 6 && currentIndex !== 7 && currentIndex !== 8){
-      setCurrentIndex(currentIndex +3)
-      setSteps(steps + 1)
-      setMessage('')
-
-      } else {
-        setMessage("You cant move down")
-      }
-      break;
-      
+      case "left":
+        if (currentIndex !== 0 && currentIndex !== 3 && currentIndex !== 6) {
+          setCurrentIndex(currentIndex - 1);
+          setSteps(steps + 1);
+          setMessage("");
+        } else {
+          setMessage("You cant move left");
+        }
+        break;
+      case "up":
+        if (currentIndex !== 0 && currentIndex !== 1 && currentIndex !== 2) {
+          setCurrentIndex(currentIndex - 3);
+          setSteps(steps + 1);
+          setMessage("");
+        } else {
+          setMessage("You cant move up");
+        }
+        break;
+      case "right":
+        if (currentIndex !== 2 && currentIndex !== 5 && currentIndex !== 8) {
+          setCurrentIndex(currentIndex + 1);
+          setSteps(steps + 1);
+          setMessage("");
+        } else {
+          setMessage("You cant move right");
+        }
+        break;
+      case "down":
+        if (currentIndex !== 6 && currentIndex !== 7 && currentIndex !== 8) {
+          setCurrentIndex(currentIndex + 3);
+          setSteps(steps + 1);
+          setMessage("");
+        } else {
+          setMessage("You cant move down");
+        }
+        break;
     }
-    
   }
 
   function onChange(evt) {
@@ -92,77 +96,25 @@ export default function AppFunctional(props) {
   }
 
   function onSubmit(evt) {
-    // Prevent the default form submission behavior
     evt.preventDefault();
-
-  
-    // Get the entered email from the input field
-    const email = document.getElementById('email').value;
-  
-    // Check if the email is valid
-    if (!isValidEmail(email)) {
-      // Display an error message if the email is not valid
-      setMessage('Invalid email address');
-      return;
-    }
-  
-    // Create a payload with information to send to the server
-    const payload = {
-      x: getXY().x,
-      y: getXY().y,
+    const data = {
+      email: email,
       steps: steps,
-      email: email
+      x: getXY()[0],
+      y: getXY()[1],
     };
   
-    // Make a request to the server using the fetch function
-    fetch('http://localhost:9000/api/result', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      // Convert the payload to JSON and include it in the request body
-      body: JSON.stringify(payload)
-    })
-      .then(response => {
-        // Check if the server response is successful
-        if (!response.ok) {
-          // If not, throw an error
-          throw new Error('Network response was not ok');
-        }
-        // Handle successful response by converting the response to JSON
-        return response.json();
-      })
-      .then(data => {
-        // Update the message state with a success message
-        setMessage('Success: ' + JSON.stringify(data));
-        setEmail('');
-      })
-      .catch(error => {
-        // Handle errors by logging to the console and updating the message state
-        console.error('Error:', error);
-        setMessage('Error: ' + error.message);
-      });
-  }
-  
-  // Function to check if an email is valid
-  function isValidEmail(email) {
-    // Check if the email is not empty
-    if (!email.trim()) {
-      return false;
-    }
-  
-    // Check if the email contains an '@' symbol
-    if (email.indexOf('@') === -1) {
-      return false;
-    }
-  
-    // Check if there's at least one dot (.) after the '@' symbol
-    const lastDotIndex = email.lastIndexOf('.');
-    if (lastDotIndex === -1 || lastDotIndex < email.indexOf('@')) {
-      return false;
-    }
-  
-    return true;
+    axios.post('http://localhost:9000/api/result', data)
+  .then((res) => {
+    console.log(data); // Log the response data to the console
+    setMessage(res.data.message);
+    setEmail(initialEmail);
+  })
+  .catch((error) => {
+    console.error('Error:', error);
+    setMessage(error.response.data.message); 
+  });
+
   }
   
 
@@ -170,12 +122,17 @@ export default function AppFunctional(props) {
     <div id="wrapper" className={props.className}>
       <div className="info">
         <h3 id="coordinates">{getXYMessage()}</h3>
-        <h3 id="steps">You moved {steps} { steps === 1 ? 'time' : 'times' }</h3>
+        <h3 id="steps">
+          You moved {steps} {steps === 1 ? "time" : "times"}
+        </h3>
       </div>
       <div id="grid">
         {[0, 1, 2, 3, 4, 5, 6, 7, 8].map((idx) => (
-          <div key={idx} className={`square${idx === currentIndex ? ' active' : ''}`}>
-            {idx === currentIndex ? 'B' : null}
+          <div
+            key={idx}
+            className={`square${idx === currentIndex ? " active" : ""}`}
+          >
+            {idx === currentIndex ? "B" : null}
           </div>
         ))}
       </div>
@@ -199,9 +156,16 @@ export default function AppFunctional(props) {
           reset
         </button>
       </div>
-      <form onSubmit={onSubmit}>
-        <input value={email} onChange={onChange} id="email" type="email" placeholder="type email"  />
-        <input id="submit" type="submit" />
+      <form >
+        <input
+          value={email}
+          onChange={onChange}
+          id="email"
+          type="email"
+          placeholder="type email"
+        />
+        <input onClick={onSubmit}
+         id="submit" type="submit" />
       </form>
     </div>
   );
