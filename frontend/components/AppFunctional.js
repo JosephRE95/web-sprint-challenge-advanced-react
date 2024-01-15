@@ -12,18 +12,20 @@ export default function AppFunctional(props) {
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
 
   function getXY() {
-   switch (currentIndex){
-    case 0: return [1,1]
-    case 1: return [2,1]
-    case 2: return [3,1]
-    case 3: return [4,2]
-    case 4: return [5,2]
-    case 5: return [6,2]
-    case 6: return [7,3]
-    case 7: return [8,3]
-    case 8: return [9,3]
-   }
+    switch (currentIndex) {
+      case 0: return { x: 1, y: 1 };
+      case 1: return { x: 1, y: 2 };
+      case 2: return { x: 1, y: 3 };
+      case 3: return { x: 2, y: 1 };
+      case 4: return { x: 2, y: 2 };
+      case 5: return { x: 2, y: 3 };
+      case 6: return { x: 3, y: 1 };
+      case 7: return { x: 3, y: 2 };
+      case 8: return { x: 3, y: 3 };
+      default: return { x: 0, y: 0 }; // Handle other cases if needed
+    }
   }
+  
 
   function getXYMessage() {
     const { x, y } = getXY();
@@ -42,35 +44,42 @@ export default function AppFunctional(props) {
     const direction = evt.target.id;
     switch (direction) {
       case 'left':
-      if (index !== 0 && index !== 3 && index !== 6){
+      if (currentIndex !== 0 && currentIndex !== 3 && currentIndex !== 6){
       setCurrentIndex(currentIndex -1)
       setSteps(steps +1 )
+      setMessage('')
       } else {
         setMessage("You cant move left")
       }
       break;
       case 'up':
-      if (index > 2){
-      setCurrentIndex(index -3)
+      if (currentIndex !== 0 && currentIndex !== 1 && currentIndex !== 2){
+      setCurrentIndex(currentIndex -3)
       setSteps(steps +1 )
+      setMessage('')
+
       } else {
-        setMessage("")
+        setMessage("You cant move up")
       }
       break;
       case 'right':
-      if (index !== 0 && index !== 3 && index !== 6){
-      setCurrentIndex()
-      setSteps()
+      if (currentIndex !== 2 && currentIndex !== 5 && currentIndex !== 8){
+      setCurrentIndex(currentIndex +1)
+      setSteps(steps + 1)
+      setMessage('')
+
       } else {
-        setMessage("")
+        setMessage("You cant move right")
       }
       break;
       case 'down':
-      if (index !== 0 && index !== 3 && index !== 6){
-      setCurrentIndex()
-      setSteps()
+      if (currentIndex !== 6 && currentIndex !== 7 && currentIndex !== 8){
+      setCurrentIndex(currentIndex +3)
+      setSteps(steps + 1)
+      setMessage('')
+
       } else {
-        setMessage("")
+        setMessage("You cant move down")
       }
       break;
       
@@ -161,7 +170,7 @@ export default function AppFunctional(props) {
     <div id="wrapper" className={props.className}>
       <div className="info">
         <h3 id="coordinates">{getXYMessage()}</h3>
-        <h3 id="steps">You moved {steps} { steps > 1 ? 'times' : 'time' }</h3>
+        <h3 id="steps">You moved {steps} { steps === 1 ? 'time' : 'times' }</h3>
       </div>
       <div id="grid">
         {[0, 1, 2, 3, 4, 5, 6, 7, 8].map((idx) => (
@@ -191,7 +200,7 @@ export default function AppFunctional(props) {
         </button>
       </div>
       <form onSubmit={onSubmit}>
-        <input id="email" type="email" placeholder="type email" value={email} onChange={onChange} />
+        <input value={email} onChange={onChange} id="email" type="email" placeholder="type email"  />
         <input id="submit" type="submit" />
       </form>
     </div>
